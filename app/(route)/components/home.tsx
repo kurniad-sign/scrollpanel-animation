@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useIsomorphicLayoutEffect } from "@/hooks/use-isomorphic";
+import { animatePanel } from "./panel-animation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,45 +29,13 @@ export function Home() {
         },
       });
 
-      timeline
-        .addLabel("start", 0)
-        .to(
-          columnsRef.current,
-          {
-            ease: "none",
-            startAt: { scale: 1.1 },
-            scale: 1,
-          },
-          "start"
-        )
-        .to(
-          columnsRef.current,
-          {
-            scrollTrigger: {
-              trigger: showcaseRef.current,
-              start: 0,
-              end: "top top",
-              scrub: true,
-            },
-            ease: "power4.inOut",
-            startAt: {
-              opacity: 0.2,
-            },
-            opacity: 1,
-            // repeat once (go back to "startAt" values)
-            yoyo: true,
-            repeat: 1,
-          },
-          "start"
-        )
-        .to(
-          columnWrapRef.current,
-          {
-            ease: "none",
-            yPercent: (pos) => (pos % 2 ? 3 : -3),
-          },
-          "start"
-        );
+      timeline.add(
+        animatePanel({
+          target: columnsRef,
+          triggerTarget: showcaseRef,
+          endTarget: columnWrapRef,
+        })
+      );
     }, sectionRef);
 
     return () => context.revert();
